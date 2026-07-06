@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{COURSE_TITLE}} | Astris Academy</title>
+<meta name="description" content="{{COURSE_META_DESCRIPTION}}">
+<link rel="icon" type="image/png" href="assets/astris-mark.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@400;600;700;800&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="index.html">
+      <img src="assets/astris-logo.png" alt="Astris Integrity Consulting">
+      <span class="brand-academy">Academy</span>
+    </a>
+    <nav class="site-nav">
+      <a href="index.html">All courses</a>
+    </nav>
+  </div>
+</header>
+
+<section class="hero course-hero">
+  <div class="wrap">
+    <a class="backlink" href="index.html">&larr; Astris Academy</a>
+    <span class="eyebrow" style="display:block; margin-top:18px;">Course {{COURSE_NUMBER}} &middot; Based on <em>The Agile Investigator</em></span>
+    <h1>{{COURSE_TITLE}}</h1>
+    <p class="lede">{{COURSE_LEDE_ONE_OR_TWO_SENTENCES}}</p>
+    <div class="course-meta">
+      <span class="chip">{{MODULE_COUNT}} modules</span>
+      <span class="chip">{{FORMAT_CHIP}}</span>
+      <span class="chip">Certificate of completion</span>
+    </div>
+  </div>
+</section>
+
+<main>
+  <section class="section">
+    <div class="wrap two-col">
+      <div>
+        <span class="eyebrow">Curriculum</span>
+        <h2>What the course covers</h2>
+        <ol class="module-list">
+          <!-- Repeat one <li> per module -->
+          <li>
+            <div>
+              <div class="m-name">{{MODULE_NAME}}</div>
+              <div class="m-desc">{{MODULE_DESCRIPTION}}</div>
+            </div>
+          </li>
+        </ol>
+      </div>
+
+      <aside>
+        <div class="fact-box">
+          <dl>
+            <dt>Audience</dt>
+            <dd>{{AUDIENCE}}</dd>
+            <dt>Method</dt>
+            <dd>The five-phase agile methodology from <em>The Agile Investigator</em> by Rick Schumacher, CFE.</dd>
+            <dt>Standard</dt>
+            <dd>Aligned with ISO/TS 37008:2023, <em>Internal investigations of organizations — Guidance</em>.</dd>
+            <dt>Format</dt>
+            <dd>{{FORMAT_DESCRIPTION}}</dd>
+            <dt>Credential</dt>
+            <dd>Astris Integrity certificate of completion.</dd>
+          </dl>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <section class="section embed-section" id="enroll">
+    <div class="wrap">
+      <span class="eyebrow">Preview &amp; Enroll</span>
+      <h2>Start the course</h2>
+      <p class="section-intro">Course preview, enrollment, and progress tracking are provided through our course platform below.</p>
+      <div class="embed-frame">
+        <iframe
+          src="{{COURSEBOX_EMBED_URL}}"
+          title="{{COURSE_TITLE}} — course enrollment"
+          allowfullscreen>
+        </iframe>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <span>&copy; 2026 Astris Integrity Consulting. All rights reserved.</span>
+    <span><a href="index.html">Astris Academy</a> &middot; <a href="https://astris-integrity.com">astris-integrity.com</a></span>
+  </div>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,397 @@
+/* ============================================================
+   Astris Academy — shared styles
+   Palette: Astris navy, cool paper, slate, brass credential accent
+   Type: Libre Franklin (display/UI) + Source Serif 4 (reading)
+   ============================================================ */
+
+:root {
+  --navy: #24395B;
+  --ink: #17243B;
+  --paper: #F5F7FA;
+  --white: #FFFFFF;
+  --slate: #55617A;
+  --brass: #A9853B;
+  --line: #D8DEE8;
+  --radius: 6px;
+  --maxw: 1080px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  * { animation: none !important; transition: none !important; }
+}
+
+body {
+  font-family: "Source Serif 4", Georgia, serif;
+  font-size: 17px;
+  line-height: 1.6;
+  color: var(--ink);
+  background: var(--paper);
+}
+
+img { max-width: 100%; display: block; }
+
+a { color: var(--navy); }
+a:focus-visible, button:focus-visible {
+  outline: 3px solid var(--brass);
+  outline-offset: 2px;
+}
+
+/* ---------- Type roles ---------- */
+h1, h2, h3, .ui {
+  font-family: "Libre Franklin", "Helvetica Neue", Arial, sans-serif;
+}
+
+.eyebrow {
+  font-family: "Libre Franklin", sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--brass);
+}
+
+/* ---------- Layout ---------- */
+.wrap {
+  max-width: var(--maxw);
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+/* ---------- Header ---------- */
+.site-header {
+  background: var(--white);
+  border-bottom: 1px solid var(--line);
+}
+.site-header .wrap {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 14px;
+  padding-bottom: 14px;
+}
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+}
+.brand img { height: 44px; width: auto; }
+.brand-academy {
+  font-family: "Libre Franklin", sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--slate);
+  border-left: 1px solid var(--line);
+  padding-left: 12px;
+}
+.site-nav a {
+  font-family: "Libre Franklin", sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  color: var(--navy);
+}
+
+/* ---------- Hero ---------- */
+.hero {
+  background: var(--navy);
+  color: var(--white);
+  padding: 72px 0 64px;
+}
+.hero h1 {
+  font-size: clamp(34px, 5vw, 52px);
+  font-weight: 800;
+  line-height: 1.08;
+  letter-spacing: -0.015em;
+  max-width: 17ch;
+  margin: 14px 0 18px;
+}
+.hero p.lede {
+  font-size: 19px;
+  line-height: 1.55;
+  color: #C9D3E4;
+  max-width: 58ch;
+}
+.hero .eyebrow { color: #CBA85C; }
+
+/* ---------- Phase rail (signature element) ---------- */
+.phase-rail {
+  margin-top: 44px;
+  display: flex;
+  align-items: stretch;
+  gap: 0;
+  border-top: 1px solid rgba(255,255,255,0.25);
+  padding-top: 20px;
+  flex-wrap: wrap;
+}
+.phase {
+  flex: 1 1 0;
+  min-width: 150px;
+  padding: 0 18px 6px 0;
+  position: relative;
+}
+.phase + .phase { padding-left: 18px; }
+.phase + .phase::before {
+  content: "";
+  position: absolute;
+  left: 0; top: 4px; bottom: 4px;
+  width: 1px;
+  background: rgba(255,255,255,0.22);
+}
+.phase .num {
+  font-family: "Libre Franklin", sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: #CBA85C;
+}
+.phase .name {
+  font-family: "Libre Franklin", sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  margin-top: 2px;
+}
+.phase .desc {
+  font-size: 13px;
+  line-height: 1.45;
+  color: #AEBBD2;
+  margin-top: 4px;
+}
+
+/* ---------- Sections ---------- */
+.section { padding: 64px 0; }
+.section h2 {
+  font-size: 26px;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  margin: 10px 0 8px;
+}
+.section .section-intro {
+  color: var(--slate);
+  max-width: 62ch;
+  margin-bottom: 36px;
+}
+
+/* ---------- Course cards (dossier style) ---------- */
+.course-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 24px;
+}
+.course-card {
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-top: 4px solid var(--navy);
+  border-radius: var(--radius);
+  padding: 26px 26px 24px;
+  display: flex;
+  flex-direction: column;
+}
+.course-card .docket {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  font-family: "Libre Franklin", sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--slate);
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 12px;
+  margin-bottom: 16px;
+}
+.course-card h3 {
+  font-size: 21px;
+  font-weight: 800;
+  line-height: 1.25;
+  margin-bottom: 10px;
+}
+.course-card p {
+  font-size: 15.5px;
+  color: var(--slate);
+  flex: 1;
+}
+.course-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 18px 0 20px;
+}
+.chip {
+  font-family: "Libre Franklin", sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--navy);
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 4px 11px;
+}
+.btn {
+  font-family: "Libre Franklin", sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  text-decoration: none;
+  text-align: center;
+  display: inline-block;
+  background: var(--navy);
+  color: var(--white);
+  border-radius: var(--radius);
+  padding: 12px 22px;
+  border: 1px solid var(--navy);
+}
+.btn:hover { background: #1B2C48; }
+.btn.secondary {
+  background: transparent;
+  color: var(--navy);
+}
+.btn.secondary:hover { background: var(--paper); }
+
+.card-coming {
+  border-top-color: var(--line);
+  background: transparent;
+  border-style: dashed;
+  align-items: flex-start;
+  justify-content: center;
+}
+.card-coming .eyebrow { color: var(--slate); }
+.card-coming p { margin-top: 8px; }
+
+/* ---------- Credibility strip ---------- */
+.cred {
+  background: var(--white);
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+.cred .wrap {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 28px;
+  padding-top: 44px;
+  padding-bottom: 44px;
+}
+.cred h3 {
+  font-size: 16px;
+  font-weight: 800;
+  margin-bottom: 6px;
+}
+.cred p { font-size: 14.5px; color: var(--slate); }
+
+/* ---------- Course page ---------- */
+.course-hero { padding-bottom: 56px; }
+.backlink {
+  font-family: "Libre Franklin", sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: #C9D3E4;
+  text-decoration: none;
+}
+.backlink:hover { color: var(--white); }
+.course-hero h1 { margin-top: 10px; }
+.course-hero .course-meta { margin: 22px 0 0; }
+.course-hero .chip {
+  background: rgba(255,255,255,0.08);
+  border-color: rgba(255,255,255,0.25);
+  color: #E6ECF5;
+}
+
+.two-col {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 48px;
+  align-items: start;
+}
+@media (max-width: 800px) {
+  .two-col { grid-template-columns: 1fr; }
+}
+
+.module-list { list-style: none; counter-reset: mod; }
+.module-list li {
+  counter-increment: mod;
+  display: flex;
+  gap: 16px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--line);
+}
+.module-list li::before {
+  content: counter(mod, decimal-leading-zero);
+  font-family: "Libre Franklin", sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--brass);
+  padding-top: 3px;
+  min-width: 26px;
+}
+.module-list .m-name {
+  font-family: "Libre Franklin", sans-serif;
+  font-weight: 700;
+  font-size: 16px;
+}
+.module-list .m-desc {
+  font-size: 14.5px;
+  color: var(--slate);
+  margin-top: 2px;
+}
+
+.fact-box {
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 24px;
+}
+.fact-box dl { display: grid; grid-template-columns: auto 1fr; gap: 10px 16px; }
+.fact-box dt {
+  font-family: "Libre Franklin", sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--slate);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.fact-box dd { font-size: 15px; }
+
+/* ---------- Embed ---------- */
+.embed-section { background: var(--white); border-top: 1px solid var(--line); }
+.embed-frame {
+  width: 100%;
+  height: 100vh;
+  min-height: 700px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+.embed-frame iframe {
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+/* ---------- Footer ---------- */
+.site-footer {
+  background: var(--ink);
+  color: #AEBBD2;
+  padding: 36px 0;
+  font-size: 14px;
+}
+.site-footer .wrap {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.site-footer a { color: #E6ECF5; }
+
+@media (max-width: 640px) {
+  .hero { padding: 52px 0 44px; }
+  .section { padding: 48px 0; }
+  .phase { min-width: 100%; padding-left: 0; }
+  .phase + .phase::before { display: none; }
+  .phase + .phase { border-top: 1px solid rgba(255,255,255,0.18); padding-top: 12px; margin-top: 12px; }
+}
