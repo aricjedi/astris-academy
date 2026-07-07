@@ -7,6 +7,12 @@ export default async function PortalLayout({ children }: { children: React.React
     data: { user },
   } = await supabase.auth.getUser();
 
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("role")
+    .eq("id", user!.id)
+    .single();
+
   return (
     <>
       <header className="site-header">
@@ -14,10 +20,13 @@ export default async function PortalLayout({ children }: { children: React.React
           <Link className="brand" href="/portal">
             <span className="brand-academy">Academy Portal</span>
           </Link>
-          <nav className="site-nav">
-            <span style={{ marginRight: 16, color: "var(--slate)", fontSize: 14 }}>
-              {user?.email}
-            </span>
+          <nav className="site-nav" style={{ display: "flex", alignItems: "center", gap: 16 }}>
+            <Link href="/portal">Dashboard</Link>
+            {(profile?.role === "company_admin" || profile?.role === "super_admin") && (
+              <Link href="/portal/admin">Your team</Link>
+            )}
+            {profile?.role === "super_admin" && <Link href="/portal/super-admin">Companies</Link>}
+            <span style={{ color: "var(--slate)", fontSize: 14 }}>{user?.email}</span>
             <form action="/auth/sign-out" method="post" style={{ display: "inline" }}>
               <button type="submit" className="btn secondary" style={{ padding: "6px 14px" }}>
                 Sign out
