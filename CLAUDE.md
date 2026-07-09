@@ -97,10 +97,9 @@ proxy.ts                                 Next 16's middleware convention; protec
    methodology" should appear on every course page.
 
 ## Standing open items (surface these if relevant work comes up)
-- The seeded `agile-workplace-investigation-training` course has 61 of 65
-  multiple-choice answers flagged `needs_review` (plain-text PDF extraction
-  lost which option was originally marked correct) — Rick needs to spot-check
-  these before flipping `is_published = true`.
+- `agile-workplace-investigation-training` is published (`is_published = true`).
+  All 61 previously-flagged multiple-choice answers were spot-checked by Rick
+  and confirmed correct; `needs_review` is cleared course-wide.
 - No video hosting, no payments/Stripe, no self-serve public signup, no
   sequential lesson locking, no auto-grading of short-answer/capstone content
   (all manually reviewed) — all explicitly out of scope per the original build
