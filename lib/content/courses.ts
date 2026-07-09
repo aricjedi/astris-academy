@@ -20,7 +20,6 @@ export type Course = {
     skills: string;
   };
   whatYoullLearn: { title: string; body: string }[];
-  embedUrl: string;
 };
 
 export const courses: Course[] = [
@@ -107,7 +106,6 @@ export const courses: Course[] = [
         body: "Craft clear, neutral reports that link findings directly to evidence, ensuring conclusions stand up to scrutiny.",
       },
     ],
-    embedUrl: "https://my.coursebox.ai/courses/019f381b-0799-7f49-ba47-05c1f5e2756b/about",
   },
 ];
 

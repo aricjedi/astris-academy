@@ -1,25 +1,50 @@
 # Astris Academy — Claude Code Project Instructions
 
 ## What this is
-Static course-hub site for Astris Integrity Consulting, deployed to Vercel at
-**academy.astris-integrity.com** (subdomain of the main astris-integrity.com site,
-which lives in a separate Vercel project — never modify that project from here).
+Independent, self-hosted LMS for Astris Integrity Consulting, deployed to Vercel
+at **academy.astris-integrity.com** (subdomain of the main astris-integrity.com
+site, which lives in a separate Vercel project — never modify that project from
+here).
 
-Courses are hosted on Coursebox.ai and embedded via iframe. This site is the
-branded catalog + course landing pages. Checkout and course delivery happen on
-Coursebox's side.
+Next.js (App Router) + Supabase (Postgres, Auth, Row Level Security). Astris
+owns the whole stack: accounts, company-based access, course content, quiz
+grading, and certificate issuance. No Coursebox, no third-party checkout — a
+super_admin (Rick) creates companies and invites their first admin; that admin
+invites their own employees. No self-serve signup, no payments.
 
 Owner: Rick Schumacher, founder of Astris Integrity (corporate investigations,
 ethics & compliance consulting). Author of *The Agile Investigator*.
 
+## Roles
+- `super_admin` (Rick) — sees/manages everything, creates companies.
+- `company_admin` — invites their own company's learners, reviews their
+  capstone submissions, sees their team's progress.
+- `learner` — takes courses, sees own progress/certificate.
+
 ## Structure
 ```
-index.html                                   Catalog page (course cards)
-agile-workplace-investigation-training.html  Course 01 landing page + embed
-styles.css                                   Shared stylesheet (all pages)
-assets/                                      Logos (astris-logo.png, astris-mark.png)
-templates/course-template.html               Boilerplate for new course pages
-vercel.json                                  cleanUrls enabled
+app/
+  page.tsx                                Catalog page (course cards)
+  (marketing)/[courseSlug]/page.tsx        Course landing page + session-aware enroll CTA
+  login/page.tsx                           Email/password sign-in (only entry point)
+  auth/callback/page.tsx                   Reads hash-fragment tokens from admin-generated links
+  portal/
+    (app)/                                 Route group with portal chrome (header/nav)
+      page.tsx                             Dashboard (role-aware)
+      admin/, admin/capstones/, super-admin/   Company admin / super admin flows
+      courses/[slug]/page.tsx              Module/lesson list with progress
+      courses/[slug]/lessons/[lessonId]/page.tsx  Lesson viewer (branches on lesson kind)
+    certificates/[courseId]/page.tsx       Printable certificate — deliberately OUTSIDE (app), no portal chrome
+  api/
+    admin/invite-learner, admin/create-company, admin/review-capstone
+    quiz/submit                            Server-side grading; correct_index never reaches the browser
+    capstone/submit
+components/marketing/, components/portal/
+lib/supabase/{server,client,server-admin}.ts   server-admin = service role, server-only
+lib/content/courses.ts                   Static marketing copy per course
+content/<course-slug>/                   Structured lesson/question content + seed.ts
+scripts/seed-course.ts                   Idempotent seeding script (service-role client)
+proxy.ts                                 Next 16's middleware convention; protects /portal/*
 ```
 
 ## Brand tokens (do not drift from these)
@@ -31,23 +56,24 @@ vercel.json                                  cleanUrls enabled
   index hero. Preserve it.
 
 ## Workflow: add a new course
-1. Copy `templates/course-template.html` to a kebab-case filename, e.g.
-   `advanced-interviewing.html`.
-2. Replace every `{{PLACEHOLDER}}` token (title, description, modules, meta
-   chips, Coursebox embed URL).
-3. Add a course card to `index.html` in the `.course-grid` — copy the existing
-   card, increment the "Course NN" docket number, update title/copy/link.
-4. Replace the dashed "In Development" card only when told to.
-5. Deploy.
+1. Write structured content under `content/<new-course-slug>/` (types.ts, seed.ts,
+   modules/ — follow the pattern in `content/agile-workplace-investigation-training/`).
+2. Add a `lib/content/courses.ts` entry (marketing copy: hero, modules summary,
+   fact box, "what you'll learn").
+3. Run a seed script (copy `scripts/seed-course.ts`, point it at the new slug) to
+   populate `courses`/`modules`/`lessons`/`questions` in Supabase. Leave
+   `is_published = false` until Rick reviews any `needs_review` questions.
+4. Add a course card to `app/page.tsx`'s catalog grid.
+5. Once reviewed, flip `is_published = true` and deploy.
 
 ## Deploy
-- Vercel CLI: `vercel --prod` (project name: `astris-academy`).
-- First-time setup: `vercel login`, then `vercel link` or let `vercel` create
-  the project. Domain `academy.astris-integrity.com` is attached in the Vercel
-  dashboard (Settings → Domains).
-- Always test the Coursebox iframe on mobile after deploy. If the frame renders
-  blank, it is Coursebox blocking iframes (X-Frame-Options) — a Coursebox plan
-  issue, not a code bug. Report it; don't work around it with hacks.
+- Vercel CLI: `vercel --prod` (project name: `astris-academy`), or push to
+  `main` — GitHub integration auto-deploys.
+- Domain `academy.astris-integrity.com` is attached in the Vercel dashboard
+  (Settings → Domains).
+- Supabase project: schema/RLS changes go through migrations (`apply_migration`
+  via the Supabase MCP tools), not manual dashboard edits, so history stays
+  reviewable.
 
 ## Hard guardrails (from Astris executive team decisions)
 1. **Credential language:** only "certificate of completion." Never "certified,"
@@ -58,14 +84,24 @@ vercel.json                                  cleanUrls enabled
    exist, use a placeholder and flag it.
 3. **ISO language:** say "aligned with ISO/TS 37008:2023" — never "ISO
    certified" or "ISO approved."
-4. **Embed pattern:** iframes use the `.embed-frame` wrapper (100vh, min-height
-   700px). Don't use `height="100%"` attributes — that was a bug we fixed.
-5. Book title is *The Agile Investigator*; company is "Astris Integrity
+4. **Grading stays server-side:** quiz `correct_index` values must never be sent
+   to the browser. Grade only in Route Handlers using the service-role client,
+   after checking the caller's session with the regular server client first.
+5. **RLS status-gating:** enrollment-scoped RLS policies (modules/lessons/
+   questions) must check `status <> 'revoked'`, not `status = 'active'` —
+   completing a course flips `enrollments.status` to `completed`, and an
+   `= 'active'` check silently locks the learner out of their own finished
+   course. Hit this bug twice in Phase 6; don't reintroduce it.
+6. Book title is *The Agile Investigator*; company is "Astris Integrity
    Consulting." Course brand pairing "Based on The Agile Investigator
    methodology" should appear on every course page.
 
 ## Standing open items (surface these if relevant work comes up)
-- Coursebox white-label / custom-domain checkout: unresolved. If enabled later,
-  only the embed URLs change — architecture stays.
-- Checkout currently runs on my.coursebox.ai under Coursebox's merchant
-  account; per-transaction fees unverified.
+- The seeded `agile-workplace-investigation-training` course has 61 of 65
+  multiple-choice answers flagged `needs_review` (plain-text PDF extraction
+  lost which option was originally marked correct) — Rick needs to spot-check
+  these before flipping `is_published = true`.
+- No video hosting, no payments/Stripe, no self-serve public signup, no
+  sequential lesson locking, no auto-grading of short-answer/capstone content
+  (all manually reviewed) — all explicitly out of scope per the original build
+  plan, not oversights.

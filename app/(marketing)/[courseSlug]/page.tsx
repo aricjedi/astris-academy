@@ -5,6 +5,7 @@ import { SiteHeader } from "@/components/marketing/SiteHeader";
 import { SiteFooter } from "@/components/marketing/SiteFooter";
 import { CredStrip } from "@/components/marketing/CredStrip";
 import { courses, getCourseBySlug } from "@/lib/content/courses";
+import { createClient } from "@/lib/supabase/server";
 
 export function generateStaticParams() {
   return courses.map((course) => ({ courseSlug: course.slug }));
@@ -32,6 +33,22 @@ export default async function CoursePage({
   const { courseSlug } = await params;
   const course = getCourseBySlug(courseSlug);
   if (!course) notFound();
+
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  let enrollment: { course_id: string; status: string } | null = null;
+  if (user) {
+    const { data } = await supabase
+      .from("enrollments")
+      .select("course_id, status, courses!inner(slug)")
+      .eq("user_id", user.id)
+      .eq("courses.slug", courseSlug)
+      .maybeSingle();
+    enrollment = data;
+  }
 
   return (
     <>
@@ -105,17 +122,30 @@ export default async function CoursePage({
 
         <section className="section embed-section" id="enroll">
           <div className="wrap">
-            <span className="eyebrow">Preview &amp; Enroll</span>
+            <span className="eyebrow">Enroll</span>
             <h2>Start the course</h2>
-            <p className="section-intro">
-              Course preview, enrollment, and progress tracking are provided through our course platform below.
-            </p>
-            <div className="embed-frame">
-              <iframe
-                src={course.embedUrl}
-                title={`${course.title} — course enrollment`}
-                allowFullScreen
-              />
+            <div className="fact-box" style={{ marginTop: 20, maxWidth: 480 }}>
+              {!user ? (
+                <>
+                  <p style={{ marginBottom: 16 }}>Sign in to start this course.</p>
+                  <Link className="btn" href={`/login?redirect=/portal/courses/${course.slug}`}>
+                    Sign in to start
+                  </Link>
+                </>
+              ) : !enrollment ? (
+                <p style={{ color: "var(--slate)" }}>
+                  You&rsquo;re signed in, but not yet enrolled in this course. Contact your company
+                  admin for access.
+                </p>
+              ) : enrollment.status === "completed" ? (
+                <Link className="btn" href={`/portal/certificates/${enrollment.course_id}`}>
+                  View certificate
+                </Link>
+              ) : (
+                <Link className="btn" href={`/portal/courses/${course.slug}`}>
+                  Continue course
+                </Link>
+              )}
             </div>
           </div>
         </section>
