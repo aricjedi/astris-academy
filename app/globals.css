@@ -357,6 +357,25 @@ h1, h2, h3, .ui {
 }
 .fact-box dd { font-size: 15px; }
 
+/* ---------- Lesson body (portal markdown content) ---------- */
+.lesson-body h3 {
+  font-size: 19px;
+  font-weight: 700;
+  margin: 28px 0 10px;
+}
+.lesson-body h3:first-child { margin-top: 0; }
+.lesson-body p { margin-bottom: 14px; }
+.lesson-body ul, .lesson-body ol { margin: 0 0 14px 22px; }
+.lesson-body li { margin-bottom: 6px; }
+.lesson-body strong { font-weight: 700; }
+.lesson-body blockquote {
+  border-left: 3px solid var(--brass);
+  padding-left: 16px;
+  color: var(--slate);
+  font-style: italic;
+  margin: 0 0 14px;
+}
+
 /* ---------- Embed ---------- */
 .embed-section { background: var(--white); border-top: 1px solid var(--line); }
 .embed-frame {
@@ -387,6 +406,10 @@ h1, h2, h3, .ui {
   gap: 12px;
 }
 .site-footer a { color: #E6ECF5; }
+
+@media print {
+  .no-print { display: none !important; }
+}
 
 @media (max-width: 640px) {
   .hero { padding: 52px 0 44px; }

@@ -23,7 +23,10 @@ export default async function PortalLayout({ children }: { children: React.React
           <nav className="site-nav" style={{ display: "flex", alignItems: "center", gap: 16 }}>
             <Link href="/portal">Dashboard</Link>
             {(profile?.role === "company_admin" || profile?.role === "super_admin") && (
-              <Link href="/portal/admin">Your team</Link>
+              <>
+                <Link href="/portal/admin">Your team</Link>
+                <Link href="/portal/admin/capstones">Capstone review</Link>
+              </>
             )}
             {profile?.role === "super_admin" && <Link href="/portal/super-admin">Companies</Link>}
             <span style={{ color: "var(--slate)", fontSize: 14 }}>{user?.email}</span>

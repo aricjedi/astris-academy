@@ -34,16 +34,35 @@ export async function POST(request: Request) {
 
   const admin = createAdminClient();
 
-  const { error: inviteError } = await admin.auth.admin.inviteUserByEmail(learnerEmail.trim(), {
-    data: {
-      role: "learner",
-      company_id: callerProfile.company_id,
-      full_name: learnerFullName?.trim() || null,
-    },
-  });
+  const { data: inviteData, error: inviteError } = await admin.auth.admin.inviteUserByEmail(
+    learnerEmail.trim(),
+    {
+      data: {
+        role: "learner",
+        company_id: callerProfile.company_id,
+        full_name: learnerFullName?.trim() || null,
+      },
+    }
+  );
 
   if (inviteError) {
     return NextResponse.json({ error: inviteError.message }, { status: 500 });
+  }
+
+  // Auto-enroll in the (single, for now) course. With more than one course
+  // this would need a course picker in the invite form instead.
+  const { data: course } = await admin
+    .from("courses")
+    .select("id")
+    .eq("slug", "agile-workplace-investigation-training")
+    .maybeSingle();
+
+  if (course && inviteData.user) {
+    await admin.from("enrollments").insert({
+      user_id: inviteData.user.id,
+      course_id: course.id,
+      company_id: callerProfile.company_id,
+    });
   }
 
   return NextResponse.json({ success: true });
