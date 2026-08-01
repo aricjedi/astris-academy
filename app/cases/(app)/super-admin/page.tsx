@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
+import { CASE_APP_FULL_NAME } from "@/lib/content/case-brand";
 
 export default async function CasesSuperAdminPage() {
   const supabase = await createClient();
@@ -25,15 +26,19 @@ export default async function CasesSuperAdminPage() {
       <div className="wrap">
         <span className="eyebrow">Super Admin</span>
         <h1 style={{ fontSize: 28, margin: "10px 0 8px" }}>Client organizations</h1>
-        <p className="section-intro">Every company with access to case management.</p>
+        <p className="section-intro">Every company with access to {CASE_APP_FULL_NAME}.</p>
 
         <Link
           className="btn"
           href="/cases/super-admin/companies/new"
-          style={{ marginBottom: 24, display: "inline-block" }}
+          style={{ marginBottom: 8, display: "inline-block" }}
         >
           + Add client org
         </Link>
+        <p style={{ fontSize: 13.5, color: "var(--slate)", marginBottom: 24 }}>
+          Works for a brand-new company or an existing one (like the ones below with 0 org admins) —
+          you&rsquo;ll pick from a dropdown of existing companies on that page.
+        </p>
 
         {companies && companies.length > 0 ? (
           <div className="fact-box" style={{ marginTop: 16 }}>

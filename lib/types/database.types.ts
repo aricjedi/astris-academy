@@ -279,13 +279,13 @@ export type Database = {
           allegation_summary: string
           assigned_investigator_id: string | null
           case_number: string
-          case_type: string | null
+          case_type: string
           closed_at: string | null
           company_id: string
           created_at: string
           created_by: string
           id: string
-          intake_source: string | null
+          intake_source: string
           opened_at: string
           severity: Database["public"]["Enums"]["case_severity"]
           status: Database["public"]["Enums"]["case_status"]
@@ -296,13 +296,13 @@ export type Database = {
           allegation_summary: string
           assigned_investigator_id?: string | null
           case_number?: string
-          case_type?: string | null
+          case_type: string
           closed_at?: string | null
           company_id: string
           created_at?: string
           created_by: string
           id?: string
-          intake_source?: string | null
+          intake_source: string
           opened_at?: string
           severity?: Database["public"]["Enums"]["case_severity"]
           status?: Database["public"]["Enums"]["case_status"]
@@ -313,13 +313,13 @@ export type Database = {
           allegation_summary?: string
           assigned_investigator_id?: string | null
           case_number?: string
-          case_type?: string | null
+          case_type?: string
           closed_at?: string | null
           company_id?: string
           created_at?: string
           created_by?: string
           id?: string
-          intake_source?: string | null
+          intake_source?: string
           opened_at?: string
           severity?: Database["public"]["Enums"]["case_severity"]
           status?: Database["public"]["Enums"]["case_status"]
@@ -763,6 +763,7 @@ export type Database = {
     Functions: {
       case_belongs_to_my_org: { Args: { p_case_id: string }; Returns: boolean }
       case_company_id: { Args: never; Returns: string }
+      case_org_active_count: { Args: never; Returns: number }
       case_role: {
         Args: never
         Returns: Database["public"]["Enums"]["case_role"]
@@ -785,6 +786,8 @@ export type Database = {
         Returns: Database["public"]["Enums"]["user_role"]
       }
       next_case_number: { Args: never; Returns: string }
+      next_case_seq: { Args: never; Returns: number }
+      next_case_seq_preview: { Args: never; Returns: number }
     }
     Enums: {
       capstone_status:

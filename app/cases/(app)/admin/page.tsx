@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
+import { CASE_APP_FULL_NAME } from "@/lib/content/case-brand";
 
 export default async function CasesAdminRosterPage() {
   const supabase = await createClient();
@@ -30,7 +31,7 @@ export default async function CasesAdminRosterPage() {
       <div className="wrap">
         <span className="eyebrow">Org Admin</span>
         <h1 style={{ fontSize: 28, margin: "10px 0 8px" }}>Your team</h1>
-        <p className="section-intro">Everyone at your organization with access to case management.</p>
+        <p className="section-intro">Everyone at your organization with access to {CASE_APP_FULL_NAME}.</p>
 
         <Link className="btn" href="/cases/admin/invite" style={{ marginBottom: 24, display: "inline-block" }}>
           + Invite a team member

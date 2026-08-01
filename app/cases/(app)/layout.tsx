@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
+import { CASE_APP_FULL_NAME } from "@/lib/content/case-brand";
 
 export default async function CasesLayout({ children }: { children: React.ReactNode }) {
   const supabase = await createClient();
@@ -18,14 +19,12 @@ export default async function CasesLayout({ children }: { children: React.ReactN
       <header className="site-header">
         <div className="wrap">
           <Link className="brand" href="/cases">
-            <span className="brand-academy">Case Management</span>
+            <span className="brand-academy">{CASE_APP_FULL_NAME}</span>
           </Link>
           <nav className="site-nav" style={{ display: "flex", alignItems: "center", gap: 16 }}>
             <Link href="/cases">Dashboard</Link>
             <Link href="/cases/new">New case</Link>
-            {(member?.role === "org_admin" || member?.role === "super_admin") && (
-              <Link href="/cases/admin">Your team</Link>
-            )}
+            {member?.role === "org_admin" && <Link href="/cases/admin">Your team</Link>}
             {member?.role === "super_admin" && <Link href="/cases/super-admin">Companies</Link>}
             <span style={{ color: "var(--slate)", fontSize: 14 }}>{user?.email}</span>
             <form action="/auth/sign-out" method="post" style={{ display: "inline" }}>

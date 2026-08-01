@@ -4,11 +4,13 @@ import { useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
+import { CASE_APP_NAME } from "@/lib/content/case-brand";
 
 function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const redirectTo = searchParams.get("redirect") ?? "/portal";
+  const isCaseContext = redirectTo.startsWith("/cases");
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -36,7 +38,7 @@ function LoginForm() {
   return (
     <section className="section">
       <div className="wrap" style={{ maxWidth: 420 }}>
-        <span className="eyebrow">Astris Academy</span>
+        <span className="eyebrow">{isCaseContext ? CASE_APP_NAME : "Astris Academy"}</span>
         <h1 style={{ fontSize: 28, margin: "10px 0 24px" }}>Sign in</h1>
         <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 16 }}>
           <label style={{ display: "flex", flexDirection: "column", gap: 6 }}>
@@ -80,9 +82,11 @@ function LoginForm() {
             {submitting ? "Signing in…" : "Sign in"}
           </button>
         </form>
-        <p style={{ marginTop: 24, fontSize: 14, color: "var(--slate)" }}>
-          <Link href="/">&larr; Back to Astris Academy</Link>
-        </p>
+        {!isCaseContext && (
+          <p style={{ marginTop: 24, fontSize: 14, color: "var(--slate)" }}>
+            <Link href="/">&larr; Back to Astris Academy</Link>
+          </p>
+        )}
       </div>
     </section>
   );

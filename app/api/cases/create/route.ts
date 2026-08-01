@@ -21,27 +21,38 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Your account has no associated client org" }, { status: 400 });
   }
 
-  const { title, allegationSummary, caseType, severity, intakeSource } = (await request.json()) as {
-    title: string;
+  const { caseType, year, allegationSummary, intakeSource } = (await request.json()) as {
+    caseType: string;
+    year: number;
     allegationSummary: string;
-    caseType?: string;
-    severity: "low" | "medium" | "high" | "critical";
-    intakeSource?: string;
+    intakeSource: string;
   };
 
-  if (!title?.trim() || !allegationSummary?.trim()) {
-    return NextResponse.json({ error: "Title and allegation summary are required" }, { status: 400 });
+  if (!caseType?.trim() || !allegationSummary?.trim() || !intakeSource?.trim()) {
+    return NextResponse.json(
+      { error: "Case type, allegation summary, and intake source are required" },
+      { status: 400 }
+    );
   }
+  if (!Number.isInteger(year)) {
+    return NextResponse.json({ error: "A valid year is required" }, { status: 400 });
+  }
+
+  const { data: seq, error: seqError } = await supabase.rpc("next_case_seq");
+  if (seqError || seq == null) {
+    return NextResponse.json({ error: seqError?.message ?? "Could not assign a case number" }, { status: 500 });
+  }
+  const caseNumber = `${String(seq).padStart(3, "0")}-${year}-${caseType.trim()}`;
 
   const { data: created, error } = await supabase
     .from("cases")
     .insert({
       company_id: member.company_id,
-      title: title.trim(),
+      case_number: caseNumber,
+      title: caseType.trim(),
       allegation_summary: allegationSummary.trim(),
-      case_type: caseType?.trim() || null,
-      severity,
-      intake_source: intakeSource?.trim() || null,
+      case_type: caseType.trim(),
+      intake_source: intakeSource.trim(),
       created_by: user.id,
     })
     .select("id")

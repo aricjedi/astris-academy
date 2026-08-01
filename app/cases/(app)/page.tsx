@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
+import { CASE_APP_NAME } from "@/lib/content/case-brand";
 
 const STATUS_LABEL: Record<string, string> = {
   triage: "Triage",
@@ -12,6 +13,19 @@ const STATUS_LABEL: Record<string, string> = {
 
 export default async function CasesDashboardPage() {
   const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  const { data: member } = await supabase
+    .from("case_members")
+    .select("role, company_id")
+    .eq("user_id", user!.id)
+    .single();
+
+  const { data: company } = member?.company_id
+    ? await supabase.from("companies").select("name").eq("id", member.company_id).single()
+    : { data: null };
 
   const { data: cases } = await supabase
     .from("cases")
@@ -23,12 +37,26 @@ export default async function CasesDashboardPage() {
     openCounts.set(c.status, (openCounts.get(c.status) ?? 0) + 1);
   }
 
+  const isInvestigator = member?.role === "investigator";
+  let orgActiveCount: number | null = null;
+  if (isInvestigator) {
+    const { data } = await supabase.rpc("case_org_active_count");
+    orgActiveCount = data ?? 0;
+  }
+
+  const subtitle =
+    member?.role === "super_admin"
+      ? "Every case across every client organization, by phase."
+      : isInvestigator
+        ? "Every case you're running, by phase."
+        : "Every case your organization is running, by phase.";
+
   return (
     <section className="section">
       <div className="wrap">
-        <span className="eyebrow">Case Management</span>
-        <h1 style={{ fontSize: 28, margin: "10px 0 8px" }}>Case docket</h1>
-        <p className="section-intro">Every case your organization is running, by phase.</p>
+        <span className="eyebrow">{company?.name ?? CASE_APP_NAME}</span>
+        <h1 style={{ fontSize: 28, margin: "10px 0 8px" }}>Investigator Desk</h1>
+        <p className="section-intro">{subtitle}</p>
 
         <div style={{ display: "flex", gap: 12, flexWrap: "wrap", margin: "8px 0 24px" }}>
           {Object.entries(STATUS_LABEL)
@@ -41,6 +69,12 @@ export default async function CasesDashboardPage() {
                 <div style={{ fontSize: 12.5, color: "var(--slate)" }}>{label}</div>
               </div>
             ))}
+          {isInvestigator && (
+            <div className="fact-box" style={{ padding: "12px 18px", minWidth: 170 }}>
+              <div style={{ fontSize: 24, fontWeight: 800, color: "var(--navy)" }}>{orgActiveCount}</div>
+              <div style={{ fontSize: 12.5, color: "var(--slate)" }}>Active org-wide</div>
+            </div>
+          )}
         </div>
 
         <Link className="btn" href="/cases/new" style={{ marginBottom: 24, display: "inline-block" }}>
