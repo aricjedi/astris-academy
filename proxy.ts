@@ -33,6 +33,34 @@ export async function proxy(request: NextRequest) {
     return NextResponse.redirect(loginUrl);
   }
 
+  if (request.nextUrl.pathname.startsWith("/cases")) {
+    const { data: caseMember } = await supabase
+      .from("case_members")
+      .select("role")
+      .eq("user_id", user.id)
+      .single();
+
+    const caseRole = caseMember?.role;
+
+    if (!caseRole) {
+      return NextResponse.redirect(new URL("/login", request.url));
+    }
+
+    if (request.nextUrl.pathname.startsWith("/cases/super-admin") && caseRole !== "super_admin") {
+      return NextResponse.redirect(new URL("/cases", request.url));
+    }
+
+    if (
+      request.nextUrl.pathname.startsWith("/cases/admin") &&
+      caseRole !== "org_admin" &&
+      caseRole !== "super_admin"
+    ) {
+      return NextResponse.redirect(new URL("/cases", request.url));
+    }
+
+    return response;
+  }
+
   const { data: profile } = await supabase
     .from("profiles")
     .select("role")
@@ -57,5 +85,5 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/portal/:path*"],
+  matcher: ["/portal/:path*", "/cases/:path*"],
 };

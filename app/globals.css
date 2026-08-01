@@ -394,6 +394,67 @@ h1, h2, h3, .ui {
 }
 .site-footer a { color: #E6ECF5; }
 
+/* ---------- Case management: phase rail (light variant) ---------- */
+.case-phase-rail {
+  display: flex;
+  align-items: stretch;
+  gap: 0;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  padding: 20px 0;
+  flex-wrap: wrap;
+}
+.case-phase {
+  flex: 1 1 0;
+  min-width: 140px;
+  padding: 0 18px 6px 0;
+  position: relative;
+}
+.case-phase + .case-phase { padding-left: 18px; }
+.case-phase + .case-phase::before {
+  content: "";
+  position: absolute;
+  left: 0; top: 4px; bottom: 4px;
+  width: 1px;
+  background: var(--line);
+}
+.case-phase .num {
+  font-family: "Libre Franklin", sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: var(--slate);
+}
+.case-phase .name {
+  font-family: "Libre Franklin", sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  margin-top: 2px;
+  color: var(--ink);
+}
+.case-phase.current .num { color: var(--brass); }
+.case-phase.current .name { color: var(--navy); }
+.case-phase.done .name { color: var(--slate); }
+.case-phase.upcoming .name { color: var(--slate); }
+
+/* ---------- Case management: status/severity pills ---------- */
+.pill {
+  display: inline-block;
+  font-family: "Libre Franklin", sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  color: var(--slate);
+}
+.pill.severity-low { color: #1E7A3E; border-color: #1E7A3E; }
+.pill.severity-medium { color: #9C6B00; border-color: #9C6B00; }
+.pill.severity-high { color: #B3541E; border-color: #B3541E; }
+.pill.severity-critical { color: #B3261E; border-color: #B3261E; }
+
 @media print {
   .no-print { display: none !important; }
 }

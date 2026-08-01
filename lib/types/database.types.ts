@@ -68,6 +68,274 @@ export type Database = {
           },
         ]
       }
+      case_analysis_entries: {
+        Row: {
+          author_id: string | null
+          case_id: string
+          content: string
+          created_at: string
+          evidence_item_id: string | null
+          id: string
+          kind: Database["public"]["Enums"]["case_analysis_kind"]
+          occurred_at: string | null
+          stance: Database["public"]["Enums"]["evidence_stance"] | null
+        }
+        Insert: {
+          author_id?: string | null
+          case_id: string
+          content: string
+          created_at?: string
+          evidence_item_id?: string | null
+          id?: string
+          kind?: Database["public"]["Enums"]["case_analysis_kind"]
+          occurred_at?: string | null
+          stance?: Database["public"]["Enums"]["evidence_stance"] | null
+        }
+        Update: {
+          author_id?: string | null
+          case_id?: string
+          content?: string
+          created_at?: string
+          evidence_item_id?: string | null
+          id?: string
+          kind?: Database["public"]["Enums"]["case_analysis_kind"]
+          occurred_at?: string | null
+          stance?: Database["public"]["Enums"]["evidence_stance"] | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "case_analysis_entries_case_id_fkey"
+            columns: ["case_id"]
+            isOneToOne: false
+            referencedRelation: "cases"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "case_analysis_entries_evidence_item_id_fkey"
+            columns: ["evidence_item_id"]
+            isOneToOne: false
+            referencedRelation: "evidence_items"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      case_members: {
+        Row: {
+          company_id: string | null
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["case_role"]
+          user_id: string
+        }
+        Insert: {
+          company_id?: string | null
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["case_role"]
+          user_id: string
+        }
+        Update: {
+          company_id?: string | null
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["case_role"]
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "case_members_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      case_plans: {
+        Row: {
+          case_id: string
+          custodians: string | null
+          id: string
+          methodology_notes: string | null
+          planned_sources: string | null
+          scope_summary: string | null
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          case_id: string
+          custodians?: string | null
+          id?: string
+          methodology_notes?: string | null
+          planned_sources?: string | null
+          scope_summary?: string | null
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          case_id?: string
+          custodians?: string | null
+          id?: string
+          methodology_notes?: string | null
+          planned_sources?: string | null
+          scope_summary?: string | null
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "case_plans_case_id_fkey"
+            columns: ["case_id"]
+            isOneToOne: true
+            referencedRelation: "cases"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      case_reports: {
+        Row: {
+          case_id: string
+          disposition: Database["public"]["Enums"]["case_disposition"] | null
+          executive_summary: string | null
+          finalized_at: string | null
+          findings: string | null
+          id: string
+          prepared_at: string | null
+          prepared_by: string | null
+          recommendations: string | null
+        }
+        Insert: {
+          case_id: string
+          disposition?: Database["public"]["Enums"]["case_disposition"] | null
+          executive_summary?: string | null
+          finalized_at?: string | null
+          findings?: string | null
+          id?: string
+          prepared_at?: string | null
+          prepared_by?: string | null
+          recommendations?: string | null
+        }
+        Update: {
+          case_id?: string
+          disposition?: Database["public"]["Enums"]["case_disposition"] | null
+          executive_summary?: string | null
+          finalized_at?: string | null
+          findings?: string | null
+          id?: string
+          prepared_at?: string | null
+          prepared_by?: string | null
+          recommendations?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "case_reports_case_id_fkey"
+            columns: ["case_id"]
+            isOneToOne: true
+            referencedRelation: "cases"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      case_status_history: {
+        Row: {
+          case_id: string
+          changed_at: string
+          changed_by: string
+          from_status: Database["public"]["Enums"]["case_status"] | null
+          id: string
+          note: string | null
+          to_status: Database["public"]["Enums"]["case_status"]
+        }
+        Insert: {
+          case_id: string
+          changed_at?: string
+          changed_by: string
+          from_status?: Database["public"]["Enums"]["case_status"] | null
+          id?: string
+          note?: string | null
+          to_status: Database["public"]["Enums"]["case_status"]
+        }
+        Update: {
+          case_id?: string
+          changed_at?: string
+          changed_by?: string
+          from_status?: Database["public"]["Enums"]["case_status"] | null
+          id?: string
+          note?: string | null
+          to_status?: Database["public"]["Enums"]["case_status"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "case_status_history_case_id_fkey"
+            columns: ["case_id"]
+            isOneToOne: false
+            referencedRelation: "cases"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      cases: {
+        Row: {
+          allegation_summary: string
+          assigned_investigator_id: string | null
+          case_number: string
+          case_type: string | null
+          closed_at: string | null
+          company_id: string
+          created_at: string
+          created_by: string
+          id: string
+          intake_source: string | null
+          opened_at: string
+          severity: Database["public"]["Enums"]["case_severity"]
+          status: Database["public"]["Enums"]["case_status"]
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          allegation_summary: string
+          assigned_investigator_id?: string | null
+          case_number?: string
+          case_type?: string | null
+          closed_at?: string | null
+          company_id: string
+          created_at?: string
+          created_by: string
+          id?: string
+          intake_source?: string | null
+          opened_at?: string
+          severity?: Database["public"]["Enums"]["case_severity"]
+          status?: Database["public"]["Enums"]["case_status"]
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          allegation_summary?: string
+          assigned_investigator_id?: string | null
+          case_number?: string
+          case_type?: string | null
+          closed_at?: string | null
+          company_id?: string
+          created_at?: string
+          created_by?: string
+          id?: string
+          intake_source?: string | null
+          opened_at?: string
+          severity?: Database["public"]["Enums"]["case_severity"]
+          status?: Database["public"]["Enums"]["case_status"]
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "cases_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       certificates: {
         Row: {
           certificate_number: string
@@ -199,6 +467,94 @@ export type Database = {
             columns: ["course_id"]
             isOneToOne: false
             referencedRelation: "courses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      evidence_attachments: {
+        Row: {
+          content_type: string | null
+          evidence_item_id: string
+          file_name: string
+          id: string
+          size_bytes: number | null
+          storage_path: string
+          uploaded_at: string
+          uploaded_by: string | null
+        }
+        Insert: {
+          content_type?: string | null
+          evidence_item_id: string
+          file_name: string
+          id?: string
+          size_bytes?: number | null
+          storage_path: string
+          uploaded_at?: string
+          uploaded_by?: string | null
+        }
+        Update: {
+          content_type?: string | null
+          evidence_item_id?: string
+          file_name?: string
+          id?: string
+          size_bytes?: number | null
+          storage_path?: string
+          uploaded_at?: string
+          uploaded_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "evidence_attachments_evidence_item_id_fkey"
+            columns: ["evidence_item_id"]
+            isOneToOne: false
+            referencedRelation: "evidence_items"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      evidence_items: {
+        Row: {
+          case_id: string
+          chain_of_custody_notes: string | null
+          collected_at: string
+          collected_by: string | null
+          created_at: string
+          custodian: string | null
+          description: string
+          id: string
+          source: string | null
+          tags: string[]
+        }
+        Insert: {
+          case_id: string
+          chain_of_custody_notes?: string | null
+          collected_at?: string
+          collected_by?: string | null
+          created_at?: string
+          custodian?: string | null
+          description: string
+          id?: string
+          source?: string | null
+          tags?: string[]
+        }
+        Update: {
+          case_id?: string
+          chain_of_custody_notes?: string | null
+          collected_at?: string
+          collected_by?: string | null
+          created_at?: string
+          custodian?: string | null
+          description?: string
+          id?: string
+          source?: string | null
+          tags?: string[]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "evidence_items_case_id_fkey"
+            columns: ["case_id"]
+            isOneToOne: false
+            referencedRelation: "cases"
             referencedColumns: ["id"]
           },
         ]
@@ -405,6 +761,22 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      case_belongs_to_my_org: { Args: { p_case_id: string }; Returns: boolean }
+      case_company_id: { Args: never; Returns: string }
+      case_role: {
+        Args: never
+        Returns: Database["public"]["Enums"]["case_role"]
+      }
+      evidence_belongs_to_my_org: {
+        Args: { p_evidence_item_id: string }
+        Returns: boolean
+      }
+      is_case_member_of: {
+        Args: { target_company_id: string }
+        Returns: boolean
+      }
+      is_case_org_admin: { Args: never; Returns: boolean }
+      is_case_super_admin: { Args: never; Returns: boolean }
       is_company_admin: { Args: never; Returns: boolean }
       is_super_admin: { Args: never; Returns: boolean }
       my_company_id: { Args: never; Returns: string }
@@ -412,6 +784,7 @@ export type Database = {
         Args: never
         Returns: Database["public"]["Enums"]["user_role"]
       }
+      next_case_number: { Args: never; Returns: string }
     }
     Enums: {
       capstone_status:
@@ -419,7 +792,23 @@ export type Database = {
         | "under_review"
         | "approved"
         | "needs_revision"
+      case_analysis_kind: "note" | "timeline_event"
+      case_disposition:
+        | "substantiated"
+        | "unsubstantiated"
+        | "partially_substantiated"
+        | "inconclusive"
+      case_role: "super_admin" | "org_admin" | "investigator"
+      case_severity: "low" | "medium" | "high" | "critical"
+      case_status:
+        | "triage"
+        | "planning"
+        | "evidence_collection"
+        | "analysis"
+        | "reporting"
+        | "closed"
       enrollment_status: "active" | "completed" | "revoked"
+      evidence_stance: "supports" | "contradicts" | "neutral"
       lesson_kind:
         | "lecture"
         | "scenario"
@@ -563,7 +952,25 @@ export const Constants = {
         "approved",
         "needs_revision",
       ],
+      case_analysis_kind: ["note", "timeline_event"],
+      case_disposition: [
+        "substantiated",
+        "unsubstantiated",
+        "partially_substantiated",
+        "inconclusive",
+      ],
+      case_role: ["super_admin", "org_admin", "investigator"],
+      case_severity: ["low", "medium", "high", "critical"],
+      case_status: [
+        "triage",
+        "planning",
+        "evidence_collection",
+        "analysis",
+        "reporting",
+        "closed",
+      ],
       enrollment_status: ["active", "completed", "revoked"],
+      evidence_stance: ["supports", "contradicts", "neutral"],
       lesson_kind: [
         "lecture",
         "scenario",
