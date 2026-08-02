@@ -4,6 +4,7 @@ import { Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
+import { isCaseAppHost } from "@/lib/content/case-brand";
 
 function AuthCallbackInner() {
   const router = useRouter();
@@ -12,7 +13,7 @@ function AuthCallbackInner() {
 
   useEffect(() => {
     async function completeSignIn() {
-      const redirectTo = searchParams.get("redirect") ?? "/portal";
+      const redirectTo = searchParams.get("redirect") ?? (isCaseAppHost() ? "/cases" : "/portal");
       const supabase = createClient();
 
       // Admin-generated links (invites, magic links) use the implicit flow:

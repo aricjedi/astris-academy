@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/server-admin";
+import { inviteOrReassignCaseMember } from "@/lib/case-invite";
 import { NextResponse } from "next/server";
 
 export async function POST(request: Request) {
@@ -57,31 +58,16 @@ export async function POST(request: Request) {
   }
 
   const origin = new URL(request.url).origin;
-  const { data: inviteData, error: inviteError } = await admin.auth.admin.inviteUserByEmail(
-    adminEmail.trim(),
-    {
-      data: {
-        case_role: "org_admin",
-        case_company_id: company.id,
-        full_name: adminFullName?.trim() || null,
-      },
-      redirectTo: `${origin}/auth/callback?redirect=/cases`,
-    }
-  );
+  const result = await inviteOrReassignCaseMember(admin, {
+    email: adminEmail.trim(),
+    fullName: adminFullName?.trim(),
+    role: "org_admin",
+    companyId: company.id,
+    redirectTo: `${origin}/auth/callback?redirect=/cases`,
+  });
 
-  if (inviteError) {
-    return NextResponse.json({ error: inviteError.message }, { status: 500 });
-  }
-
-  if (inviteData.user) {
-    const { error: memberError } = await admin.from("case_members").insert({
-      user_id: inviteData.user.id,
-      company_id: company.id,
-      role: "org_admin",
-    });
-    if (memberError) {
-      return NextResponse.json({ error: memberError.message }, { status: 500 });
-    }
+  if ("error" in result) {
+    return NextResponse.json({ error: result.error }, { status: 500 });
   }
 
   return NextResponse.json({ company });

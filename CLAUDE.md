@@ -15,9 +15,11 @@ invites their own employees. No self-serve signup, no payments.
 Owner: Rick Schumacher, founder of Astris Integrity (corporate investigations,
 ethics & compliance consulting). Author of *The Agile Investigator*.
 
-This repo also hosts a second, independent product: a real case-management
-tool under `/cases`. It shares hosting, the Next.js app, and the Supabase
-project with the Academy, but has its own tables, RLS, and roles — see
+This repo also hosts a second, independent product: **Agile Desk**, a real
+case-management tool under `/cases`, also reachable at its own domain,
+**agiledesk.astris-integrity.com** (see [Domains](#domains) below). It shares
+hosting, the Next.js app, and the Supabase project with the Academy, but has
+its own tables, RLS, and roles — see
 [Case management app](#case-management-app-cases) below. Nothing under
 `/cases` reads or writes `profiles`, `courses`, `enrollments`, or `lessons`,
 and nothing under `/portal` reads `case_members` or the `cases` tables.
@@ -51,8 +53,28 @@ lib/supabase/{server,client,server-admin}.ts   server-admin = service role, serv
 lib/content/courses.ts                   Static marketing copy per course
 content/<course-slug>/                   Structured lesson/question content + seed.ts
 scripts/seed-course.ts                   Idempotent seeding script (service-role client)
-proxy.ts                                 Next 16's middleware convention; protects /portal/* and /cases/*
+proxy.ts                                 Next 16's middleware convention; protects /portal/* and /cases/*,
+                                          and on the agiledesk.* host rewrites bare paths to their /cases
+                                          equivalent (see Domains below)
 ```
+
+## Domains
+- **academy.astris-integrity.com** — the Academy (`/`, `/portal/*`, course
+  landing pages). Also still serves the case app at `/cases/*`.
+- **agiledesk.astris-integrity.com** — Agile Desk's own domain. `proxy.ts`
+  detects this host and internally rewrites bare paths to their `/cases`
+  equivalent (e.g. `/` serves what `/cases` serves, `/new` serves
+  `/cases/new`) — the browser URL bar stays clean, only `/login`, `/auth/*`,
+  and `/api/*` are exempt from the rewrite. Both domains point at the same
+  Vercel project and the same Supabase-backed session; a user signing in on
+  one domain does not carry a session to the other (cookies are host-scoped),
+  which is fine since each product's users mostly live on one domain.
+- Attaching a new domain to the Vercel project (Settings → Domains) and
+  pointing DNS at it (a CNAME at the registrar) has to happen outside this
+  repo — there's no Vercel MCP tool for domain management, and DNS is
+  controlled by Rick, not something Claude Code can reach. If `agiledesk.*`
+  isn't resolving, check those two things first before assuming the app code
+  is broken.
 
 ## Case management app (`/cases`)
 Real, operational tool for running an investigation case from triage through
@@ -65,18 +87,29 @@ so the Agile Investigator framework is load-bearing in the data model, not
 just marketing copy.
 
 Roles (`case_members.role`, completely independent of `profiles.role`):
-- `super_admin` (Rick) — sees/manages every client org.
+- `super_admin` (Rick) — sees/manages every client org; lands on the org
+  roster (`/cases/super-admin`) rather than the investigator dashboard —
+  they manage organizations, not a personal caseload.
 - `org_admin` — invites their own org's investigators, sees every case in
   their org, assigns investigators to cases.
-- `investigator` — org-wide read/write on cases, evidence, plans, analysis,
-  and reports (not limited to cases assigned to them); cannot manage
-  `case_members`.
+- `investigator` — sees only cases they opened or are assigned to (enforced
+  via RLS, not just hidden in the UI — `case_belongs_to_my_org()` and the
+  `cases` SELECT/UPDATE policies are role-aware), plus an aggregate
+  org-wide active-case count via `case_org_active_count()` (a number only,
+  no row access); cannot manage `case_members`.
+
+Inviting an email that already has a Supabase Auth account (a prior case
+invite, or an existing Academy account) does **not** error — it reassigns
+that user's `case_members` row to the new role/company instead
+(`lib/case-invite.ts`). A person holds one case-app role at a time by
+design, so this is a deliberate re-invite/reassign path, not a bug to "fix"
+back into a duplicate-registration error.
 
 ```
 app/
   cases/
     (app)/                                 Route group with case-app chrome (separate header/nav from /portal)
-      page.tsx                             Case docket dashboard (counts by phase, case list)
+      page.tsx                             Investigator Desk dashboard (role-scoped case list + phase counts)
       new/page.tsx                         Triage: open a new case
       [caseId]/page.tsx                    Case overview — phase rail, assignment, status transitions
       [caseId]/plan/page.tsx               Planning phase form (scope, custodians, sources, methodology)
@@ -181,10 +214,13 @@ users land in the right portal.
   sequential lesson locking, no auto-grading of short-answer/capstone content
   (all manually reviewed) — all explicitly out of scope per the original build
   plan, not oversights.
-- `/cases` (case management) is newly built and not yet used with real client
+- `/cases` (Agile Desk) is newly built and not yet used with real client
   data. MVP scope covers triage → planning → evidence collection (with file
-  attachments) → analysis (findings + timeline) → report/closure. Not yet
-  built: an org-scoped view restricting investigators to only their assigned
-  cases (currently org-wide visibility by design), a read-only
-  stakeholder/reviewer role, and exportable (non-print) report documents —
-  all explicitly deferred per the build decisions, not oversights.
+  attachments) → analysis (findings + timeline) → report/closure, with
+  investigator visibility scoped to their own cases. Not yet built: a
+  read-only stakeholder/reviewer role and exportable (non-print) report
+  documents — explicitly deferred per the build decisions, not oversights.
+- Supabase's built-in email sending has a low rate limit on the free tier —
+  expect "email rate limit exceeded" during heavy invite testing. Fixing
+  this for real usage means Rick connecting a custom SMTP provider in
+  Supabase Auth settings; not something to route around in application code.

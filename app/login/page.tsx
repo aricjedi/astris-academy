@@ -4,13 +4,13 @@ import { useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
-import { CASE_APP_NAME } from "@/lib/content/case-brand";
+import { CASE_APP_NAME, isCaseAppHost } from "@/lib/content/case-brand";
 
 function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const redirectTo = searchParams.get("redirect") ?? "/portal";
-  const isCaseContext = redirectTo.startsWith("/cases");
+  const redirectTo = searchParams.get("redirect") ?? (isCaseAppHost() ? "/cases" : "/portal");
+  const isCaseContext = isCaseAppHost() || redirectTo.startsWith("/cases");
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
